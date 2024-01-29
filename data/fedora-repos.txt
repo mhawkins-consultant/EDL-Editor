@@ -1,0 +1,3 @@
+# example only!
+check.fedoraproject.org
+mirrors.fedoraproject.org

@@ -1,0 +1,177 @@
+body{
+	background-image: url("../../images/galactic.jpg");
+	background-color: lightblue;
+	font-family: Open Sans;
+	font-weight: 400;
+	font-size: 1rem;
+	line-height: 2;
+	margin:0
+}
+
+table.wide-table { width:100%; }
+
+table { 
+	display: table;
+	border-collapse: separate;
+	border-spacing: 2px;
+	border-color: Gray;
+	width:100%;
+}
+
+td {
+	font-size: 12px;
+	font-weight: bold;
+	width: 20em;
+	height: 2em;
+	text-align: center;
+	vertical-align: middle;
+	background-color: LightGray;
+}
+
+td.left {
+	text-align: left;
+}
+
+td.w20 {
+	width: 20px;
+}
+
+
+td.header {
+	background-color: LightGreen;
+}
+
+td.heading {
+	color:	blue;
+	background-color: lightskyblue;
+	font-size: 18px;
+	text-align: center;
+	padding: 5px;
+}
+
+.checkboxtext {
+  /* Checkbox text */
+  font-size: 110%;
+  display: inline;
+}
+
+td.green{
+	color: yellow;
+	background-color: green;
+	font-size: 16px;
+}
+
+td.lgreen{
+	color: black;
+	background-color: lightgreen;
+}
+
+tr.lgreen{
+	color: black;
+	background-color: lightgreen;
+}
+
+td.yellow{
+	color: red;
+	background-color: yellow;
+	text-decoration: blink;
+}
+
+td.lorange{
+	color: black;
+	background-color: #F3E2A9;
+}
+
+td.red{
+	color: yellow;
+	background-color: red;
+	text-decoration: blink;
+}
+
+td.blue{ color: blue; }
+
+td.spacer {
+	height: 10px;
+	background-color: white;
+}
+
+td.footer {
+	font-size: 2px;
+	font: small 'trebuchet ms',helvetica,sans-serif;
+}
+
+td.result {
+	font: small 'Courier New', Courier, monospace;
+}
+
+input { 
+	color:#050;
+	font: bold small 'trebuchet ms',helvetica,sans-serif;
+	font-size: 12px;
+}
+
+input[type=checkbox] {
+  /* Double-sized radio buttons */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+
+button {
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	vertical-align: middle;
+	color: DarkGreen;
+}
+
+.hidden
+{
+    display: none;
+}
+
+hidden
+{
+    display: none;
+}
+
+#loading-div-background{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+}
+
+#loading-div{
+    width: 300px;
+    height: 150px;
+    background-color: #fff;
+    border: 5px solid #1468b3;
+    text-align: center;
+    color: #202020;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -150px;
+    margin-top: -100px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    behavior: url("/css/pie/PIE.htc"); /* HANDLES IE */
+}
+
+a{
+	color:#666;
+	text-decoration:none
+}
+a:hover{
+	color:#666;
+	text-decoration:underline;
+	background-color: grey;
+}
+

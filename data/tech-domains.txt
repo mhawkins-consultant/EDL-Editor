@@ -1,0 +1,9 @@
+# DOMAIN-LIST
+wantegrity.com
+checkpoint.com
+cisco.com
+dell.com
+fortinet.com
+paloaltonetworks.com
+pfsense.com
+ubiquity.com
