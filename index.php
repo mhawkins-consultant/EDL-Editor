@@ -27,6 +27,18 @@ function confirm_delete() {
 function confirm_clone() {
     return confirm("Are you sure you want to clone the selected file?");
 }
+function showActionButtons(lineNum){
+  document.getElementById('actionCell['+lineNum+']').style.display = "";
+  document.getElementById('td1['+lineNum+']').className = "lorange";
+  document.getElementById('td2['+lineNum+']').className = "lorange";
+  document.getElementById('td3['+lineNum+']').className = "lorange";
+}
+function hideActionButtons(lineNum){
+  document.getElementById('actionCell['+lineNum+']').style.display = "none";
+  document.getElementById('td1['+lineNum+']').className = "";
+  document.getElementById('td2['+lineNum+']').className = "";
+  document.getElementById('td3['+lineNum+']').className = "";
+}
 -->
 </script>
 
@@ -62,7 +74,7 @@ if($_SERVER['REQUEST_METHOD']!=='POST'||(isset($_REQUEST['submit'])&&($_REQUEST[
     }
 
     if(isset($_REQUEST['submit'])&&$_REQUEST['submit']=='Create File'){
-        touch(getcwd()."/data/".$_REQUEST['newfilename']);
+        touch(getcwd()."/data/".$_REQUEST['newfilename']."txt");
         $fileList = glob(getcwd().'/data/*.txt');
         $_SESSION['file']=$_REQUEST['newfilename'];
     }
@@ -83,10 +95,12 @@ if($_SERVER['REQUEST_METHOD']!=='POST'||(isset($_REQUEST['submit'])&&($_REQUEST[
     echo "</select></td>";
     echo '<td class="lgreen">';
     echo '<input class="submit" type="submit" name="submit" value="Open">';
-//    echo '<input class="submit" type="submit" name="submit" value="Delete" onclick="return confirm_delete()">';
-//    echo '<input class="submit" type="submit" name="submit" value="Clone" onclick="return confirm_clone()">';
-//    echo '<input class="submit" type="submit" name="submit" value="Rename">';
-//    echo '<input class="submit" type="submit" name="submit" value="New">';
+    if(!file_exists("demo")){
+      echo '<input class="submit" type="submit" name="submit" value="Delete" onclick="return confirm_delete()">';
+      echo '<input class="submit" type="submit" name="submit" value="Clone" onclick="return confirm_clone()">';
+      echo '<input class="submit" type="submit" name="submit" value="Rename">';
+      echo '<input class="submit" type="submit" name="submit" value="New">';
+    }
     echo '</td><td class="lgreen" colspan="10"></td></tr>'."\n";
 }elseif(isset($_REQUEST['submit'])&&$_REQUEST['submit']=='Rename'){
     $_SESSION['file']=$_REQUEST['file'];
@@ -124,55 +138,53 @@ if($_SERVER['REQUEST_METHOD']!=='POST'||(isset($_REQUEST['submit'])&&($_REQUEST[
     if(isset($_REQUEST['submit'])&&$_REQUEST['submit']=='Natural Sort') {
         natsort($_SESSION['data']);
     }
-    if(isset($data)){
-        // delete line
-        $count=0;
-        foreach($_SESSION['data'] as $line => $data){
-            $count++;
-            if(isset($_POST['delete'][$count])) unset($_SESSION['data'][$line]);
+    // delete line
+    $count=0;
+    foreach($_SESSION['data'] as $line => $data){
+        $count++;
+        if(isset($_POST['delete'][$count])) unset($_SESSION['data'][$line]);
+    }
+    // new line
+    $count=0;
+    foreach($_SESSION['data'] as $line => $data){
+        $count++;
+        if(isset($_POST['newLine'][$count])){
+            $before = array_slice($_SESSION['data'], 0, $count);
+            $after = array_slice($_SESSION['data'], $count);
+            $_SESSION['data'] = array_merge($before,array($count=>""),$after);
+            break;
         }
-        // new line
-        $count=0;
-        foreach($_SESSION['data'] as $line => $data){
-            $count++;
-            if(isset($_POST['newLine'][$count])){
-                $before = array_slice($_SESSION['data'], 0, $count);
-                $after = array_slice($_SESSION['data'], $count);
-                $_SESSION['data'] = array_merge($before,array($count=>""),$after);
-                break;
-            }
-        }
-        if(isset($_POST['newLine'][($count+1)])) array_push($_SESSION['data'],"");
+    }
+    if(isset($_POST['newLine'][($count+1)])) array_push($_SESSION['data'],"#");
 
-        // clone line
-        $count=0;
-        foreach($_SESSION['data'] as $line => $data){
-            $count++;
-            if(isset($_POST['clone'][$count])){
-                $before = array_slice($_SESSION['data'], 0, $count);
-                $after = array_slice($_SESSION['data'], $count);
-                $_SESSION['data'] = array_merge($before,array($count=>$data),$after);
-                break;
-            }
+    // clone line
+    $count=0;
+    foreach($_SESSION['data'] as $line => $data){
+        $count++;
+        if(isset($_POST['clone'][$count])){
+            $before = array_slice($_SESSION['data'], 0, $count);
+            $after = array_slice($_SESSION['data'], $count);
+            $_SESSION['data'] = array_merge($before,array($count=>$data),$after);
+            break;
         }
+    }
 
-        // move a line up or down
-        $count=0;
-        foreach($_SESSION['data'] as $line => $data){
-            if(isset($_POST['up'][$count])){
-                $temp=$_SESSION['data'][$count-2];
-                $_SESSION['data'][$count-2]=$_SESSION['data'][$count-1];
-                $_SESSION['data'][$count-1]=$temp;
-                break;
-            }
-            if(isset($_POST['dn'][$count])){
-                $temp=$_SESSION['data'][$count-1];
-                $_SESSION['data'][$count-1]=$_SESSION['data'][$count];
-                $_SESSION['data'][$count]=$temp;
-                break;
-            }
-            $count++;
+    // move a line up or down
+    $count=0;
+    foreach($_SESSION['data'] as $line => $data){
+        if(isset($_POST['up'][$count])){
+            $temp=$_SESSION['data'][$count-2];
+            $_SESSION['data'][$count-2]=$_SESSION['data'][$count-1];
+            $_SESSION['data'][$count-1]=$temp;
+            break;
         }
+        if(isset($_POST['dn'][$count])){
+            $temp=$_SESSION['data'][$count-1];
+            $_SESSION['data'][$count-1]=$_SESSION['data'][$count];
+            $_SESSION['data'][$count]=$temp;
+            break;
+        }
+        $count++;
     }
 
     // if we just opened the editing page then get the data from the file and populate the session data array
@@ -191,7 +203,11 @@ if($_SERVER['REQUEST_METHOD']!=='POST'||(isset($_REQUEST['submit'])&&($_REQUEST[
 //    echo '<input class="submit" type="submit" name="submit" value="Alpha Sort" onclick="return confirm_alpha_sort()">';
     echo '<input class="submit" type="submit" name="submit" value="Natural Sort" onclick="return confirm_natural_sort()">';
     echo '</td><td class="lgreen" colspan="10">';
-    echo 'URL: <a id="URL" href="http://'.$_SERVER['SERVER_NAME'].'/edl/data/'.$_SESSION['file'].'">http://'.$_SERVER['SERVER_NAME'].'/edl/data/'.$_SESSION['file'].'</a>';
+
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') $prot="https://"; else $prot="http://";
+    $onlyPath = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname($_SERVER['PHP_SELF']));
+
+    echo 'URL: <a id="URL" href="'.$prot.$_SERVER['SERVER_NAME'].$onlyPath.'/data/'.$_SESSION['file'].'">'.$prot.$_SERVER['SERVER_NAME'].$onlyPath.'/data/'.$_SESSION['file'].'</a>';
 //    echo ' <button title="Press this button to copy the password to your computer clipboard" onclick="Copy(\'URL\')">Copy URL</button>';
     echo '</td>';
     echo "</tr>\n";
@@ -210,14 +226,19 @@ if($_SERVER['REQUEST_METHOD']!=='POST'||(isset($_REQUEST['submit'])&&($_REQUEST[
         }
         
         echo "<tr>";
-        echo '<td class="w20">'.($count)."</td>\n";
-        echo "<td>".'<input type="text" id="linetext['.$count.']" name="linetext['.$count.']" value="'.$textperline.'" size="80">'."</td>\n";
-        echo '<td><input type="submit" class="submit" name="delete['.$count.']" value="Delete" onclick="return confirm_delete_line('."'".$count."','".$textperline."'".')">'."\n";
+        echo '<td id="td1['.$count.']" class="w20">'.($count)."</td>\n";
+        echo '<td id="td2['.$count.']">'.'<input type="text" id="linetext['.$count.']" name="linetext['.$count.']" value="'.$textperline.'" size="80">'."</td>\n";
+
+        echo '<td id="td3['.$count.']" onmouseenter="showActionButtons('."'".$count."'".')" onmouseleave="hideActionButtons('."'".$count."'".')">';
+        echo '<div class="actionCell" id="actionCell['.$count.']" style="display: none">';
+        echo '<input type="submit" class="submit" name="delete['.$count.']" value="Delete" onclick="return confirm_delete_line('."'".$count."','".$textperline."'".')">'."\n";
         echo '<input type="submit" class="submit" name="newLine['.$count.']" value="New Line">'."\n";
         echo '<input type="submit" class="submit" name="clone['.$count.']" value="Clone">'."\n";
         if($count>1) echo '<input type="submit" class="submit" name="up['.$count.']" value="Up">'."\n";
         if($count<count($_SESSION['data'])) echo '<input type="submit" class="submit" name="dn['.$count.']" value="Down">'."\n";
-        echo "</td></tr>\n";
+        echo "</div>";
+        echo "</td>";
+        echo "</tr>\n";
     }
     echo '<tr>';
     echo '<td class="w20">'.($count+1)."</td>\n";
